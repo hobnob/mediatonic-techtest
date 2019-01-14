@@ -7,41 +7,46 @@ namespace MediatonicApi.Models
         public User User { get; set; }
         public Animal Animal { get; set; }
         public string AnimalName { get; set; }
-        public DateTime LastHungerUpdate { get; set; }
-        public DateTime LastHappinessUpdate { get; set; }
-        public uint HungerAtUpdate { get; set; }
-        public int HappinessAtUpdate { get; set; }
 
-        public double Happiness {
+        public decimal Happiness {
             get
             {
-                return Math.Max(
-                    Animal.MaxHappiness,
-                    HappinessAtUpdate - (Animal.SadnessPerSecond * (DateTime.UtcNow - LastHappinessUpdate).TotalSeconds)
+                return (decimal) Math.Round(
+                        Math.Max(
+                            Animal.MinHappiness,
+                            happinessAtUpdate - (Animal.SadnessPerSecond * (int) (DateTime.UtcNow - lastHappinessUpdate).TotalSeconds)
+                        ), 2
                 );
             }
         }
 
-        public double Hunger {
+        public decimal Hunger {
             get
             {
-                return Math.Min(
-                    Animal.MaxHunger,
-                    HungerAtUpdate + (Animal.HungerPerSecond * (DateTime.UtcNow - LastHungerUpdate).TotalSeconds)
+                return (decimal) Math.Round(
+                    Math.Min(
+                        Animal.MaxHunger,
+                        hungerAtUpdate + (Animal.HungerPerSecond * (int) (DateTime.UtcNow - lastHungerUpdate).TotalSeconds)
+                    ), 2
                 );
             }
         }
+
+        private DateTime lastHungerUpdate = DateTime.UtcNow;
+        private DateTime lastHappinessUpdate = DateTime.UtcNow;
+        private uint hungerAtUpdate;
+        private int happinessAtUpdate;
 
         public void Feed(uint foodAmount)
         {
-            HungerAtUpdate = (uint) Math.Max((int) Hunger - (int) foodAmount, 0);
-            LastHungerUpdate = DateTime.UtcNow;
+            hungerAtUpdate = (uint) Math.Max((int) Hunger - (int) foodAmount, 0);
+            lastHungerUpdate = DateTime.UtcNow;
         }
 
         public void Stroke(uint happinessAmount)
         {
-            HappinessAtUpdate = Math.Min(HappinessAtUpdate + (int)happinessAmount, Animal.MaxHappiness);
-            LastHappinessUpdate = DateTime.UtcNow;
+            happinessAtUpdate = Math.Min(happinessAtUpdate + (int)happinessAmount, Animal.MaxHappiness);
+            lastHappinessUpdate = DateTime.UtcNow;
         }
     }
 }
