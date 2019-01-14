@@ -6,6 +6,6 @@ namespace MediatonicApi.Models
     {
         public uint Id { get; set; }
         public string DisplayName { get; set; }
-        public List<Animal> Animals { get; set; }
+        public ICollection<UserAnimal> Animals { get; set; }
     }
 }

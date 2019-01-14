@@ -4,9 +4,11 @@ namespace MediatonicApi.Models
 {
     public class UserAnimal
     {
+        public uint UserId { get; set; }
         public User User { get; set; }
+
+        public uint AnimalId { get; set; }
         public Animal Animal { get; set; }
-        public string AnimalName { get; set; }
 
         public decimal Happiness {
             get
