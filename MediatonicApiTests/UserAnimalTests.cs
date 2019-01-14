@@ -13,8 +13,8 @@ namespace Tests
         {
             testAnimal = new Animal() {
                 TypeName = "Test Animal",
-                HungerPerSecond = 0.5,
-                SadnessPerSecond = 0.25,
+                HungerPerSecond = 0.5m,
+                SadnessPerSecond = 0.25m,
                 MinHappiness = -1,
                 MaxHappiness = 1,
                 MaxHunger = 1
@@ -67,6 +67,59 @@ namespace Tests
             // Make sure that happiness doesn't go below the threshold
             Thread.Sleep(4000);
             Assert.AreEqual(-1, userAnimal.Happiness);
+        }
+
+        [Test]
+        public void TestStroke()
+        {
+            UserAnimal userAnimal = new UserAnimal() {
+                Animal = testAnimal
+            };
+
+            // Wait until hunger is at maximum
+            Thread.Sleep(2000);
+
+            // Make sure that feeding reduces back to zero
+            userAnimal.Feed(1);
+            Assert.AreEqual(0, userAnimal.Hunger);
+
+            // Hunger is now 0.5
+            Thread.Sleep(1000);
+
+            // Make sure that feeding reduces back to zero and no further
+            userAnimal.Feed(2);
+            Assert.AreEqual(0, userAnimal.Hunger);
+        }
+
+        [Test]
+        public void TestFeed()
+        {
+            UserAnimal userAnimal = new UserAnimal() {
+                Animal = testAnimal
+            };
+
+            // Wait until happiness is at its lowest
+            Thread.Sleep(4000);
+
+            // Make sure that stroking reduces back to zero
+            userAnimal.Stroke(1);
+            Assert.AreEqual(0, userAnimal.Happiness);
+            
+            // Make sure that stroking can go up to 1
+            userAnimal.Stroke(1);
+            Assert.AreEqual(1, userAnimal.Happiness);
+
+            // Make sure that stroking can go no further than 1
+            userAnimal.Stroke(1);
+            Assert.AreEqual(1, userAnimal.Happiness);
+
+            // Wait until happiness is at its lowest
+            Thread.Sleep(4000);
+
+            // Make sure that stroking can go no further than 1
+            userAnimal.Stroke(3);
+            Assert.AreEqual(1, userAnimal.Happiness);
+
         }
     }
 }
