@@ -8,8 +8,14 @@ namespace MediatonicApi.Models
         public DbSet<Animal> Animals { get; set; }
         public DbSet<UserAnimal> UserAnimals { get; set; }
 
+        public ApiContext(DbContextOptions options) : base(options)
+        {
+
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserAnimal>().HasKey(ua => new { ua.UserId, ua.AnimalId });
             modelBuilder.Entity<UserAnimal>().Property("lastHungerUpdate");
             modelBuilder.Entity<UserAnimal>().Property("lastHappinessUpdate");
             modelBuilder.Entity<UserAnimal>().Property("hungerAtUpdate");
