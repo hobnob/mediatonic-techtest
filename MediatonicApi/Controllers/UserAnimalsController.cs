@@ -6,26 +6,59 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MediatonicApi.Controllers
 {
+    /// <summary>
+    /// Controller for routes for animals assigend to users
+    /// </summary>
     [Route("v1/users/{userId}/animals")]
     [ApiController]
     public class UserAnimalsController : ControllerBase
     {
+        /// <summary>
+        /// Holds the user animals service provider
+        /// </summary>
         private UserAnimalService service;
+
+        /// <summary>
+        /// The amount that feeding an animal adds
+        /// </summary>
         private const decimal FEED_AMOUNT = 0.25m;
+
+        /// <summary>
+        /// The amount taht stroking an animal adds
+        /// </summary>
         private const decimal STROKE_AMOUNT = 0.25m;
 
+        /// <summary>
+        /// Creates a new user animals controller
+        /// </summary>
+        /// <param name="service">Injected user animals service</param>
         public UserAnimalsController(UserAnimalService service)
         {
             this.service = service;
         }
 
+        /// <summary>
+        /// Gets all animals assigned to a specific user
+        /// </summary>
+        /// <param name="userId">The user to get animals for</param>
+        /// <returns>An array of animals that the user owns</returns>
         [HttpGet]
+        [ProducesResponseType(200)]
         public ActionResult<IEnumerable<UserAnimal>> Get(uint userId)
         {
             return new JsonResult(service.GetAll(userId));
         }
 
+        /// <summary>
+        /// Gets a single animal that the user owns
+        /// </summary>
+        /// <param name="userId">The user to get animal for</param>
+        /// <param name="id">The animal ID to get</param>
+        /// <returns>The details of the animal that the user owns</returns>
+        /// <response code="404">Animal or User with that ID could not be found</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Get(uint userId, uint id)
         {
             UserAnimal userAnimal = service.Get(userId, id);
@@ -36,13 +69,22 @@ namespace MediatonicApi.Controllers
             return new JsonResult(userAnimal);
         }
 
+        /// <summary>
+        /// Sets a user to own a new type of animal
+        /// </summary>
+        /// <param name="userId">The user to assign ownership to</param>
+        /// <param name="animalId">The animal ID to assign to the user</param>
+        /// <returns>The location of the new User Animal entity</returns>
+        /// <response code="400">Animal or User with that ID do not exist</response>
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         public ActionResult<UserAnimal> Post(uint userId, [FromBody] uint animalId)
         {
             try {
                 service.Add(new UserAnimal() { UserId = userId, AnimalId = animalId });
 
-                return Get(userId, animalId);
+                return new CreatedAtActionResult("Get", "UserAnimals", new { userId, id = animalId }, null);
             } catch (DuplicateEntryException e) {
                 return new BadRequestObjectResult(e.Message);
             } catch (NotFoundException e) {
@@ -50,7 +92,16 @@ namespace MediatonicApi.Controllers
             }
         }
 
-        [HttpGet("{id}/feed")]
+        /// <summary>
+        /// Feeds the animal specified by the user ID and animal ID
+        /// </summary>
+        /// <param name="userId">The ID of the user that owns the animal</param>
+        /// <param name="id">The ID of the animal to feed</param>
+        /// <returns>The new status for that particular animal</returns>
+        /// <response code="404">Animal or User with that ID could not be found</response>
+        [HttpPut("{id}/feed")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Feed(uint userId,  uint id)
         {
             UserAnimal userAnimal = service.Get(userId, id);
@@ -65,7 +116,16 @@ namespace MediatonicApi.Controllers
             return Get(userId, id);
         }
 
-        [HttpGet("{id}/stroke")]
+        /// <summary>
+        /// Strokes the animal specified by the user ID and animal ID
+        /// </summary>
+        /// <param name="userId">The ID of the user that owns the animal</param>
+        /// <param name="id">The ID of the animal to stroke</param>
+        /// <returns>The new status for that particular animal</returns>
+        /// <response code="404">Animal or User with that ID could not be found</response>
+        [HttpPut("{id}/stroke")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Stroke(uint userId, uint id)
         {
             UserAnimal userAnimal = service.Get(userId, id);
