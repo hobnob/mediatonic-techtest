@@ -43,6 +43,13 @@ namespace Tests
         }
 
         [Test]
+        public void TestHungerNoAnimal()
+        {
+            UserAnimal userAnimal = new UserAnimal();
+            Assert.Catch<System.InvalidOperationException>(() => { decimal x = userAnimal.Hunger; });
+        }
+
+        [Test]
         public void TestHappinessDecrease()
         {
             UserAnimal userAnimal = new UserAnimal() {
@@ -67,6 +74,14 @@ namespace Tests
         }
 
         [Test]
+        public void TestHappinessNoAnimal()
+        {
+            UserAnimal userAnimal = new UserAnimal();
+            Assert.Catch<System.InvalidOperationException>(() => { decimal x = userAnimal.Happiness; });
+        }
+
+
+        [Test]
         public void TestStroke()
         {
             UserAnimal userAnimal = new UserAnimal() {
@@ -86,6 +101,17 @@ namespace Tests
             // Make sure that feeding reduces back to zero and no further
             userAnimal.Feed(2);
             Assert.AreEqual(0, userAnimal.Hunger);
+        }
+
+        [Test]
+        public void TestStrokeInvalid()
+        {
+            UserAnimal userAnimal = new UserAnimal() {
+                Animal = testAnimal
+            };
+
+            Assert.Catch<System.ArgumentException>(() => userAnimal.Stroke(-0.1m));
+            Assert.Catch<System.ArgumentException>(() => userAnimal.Stroke(0));
         }
 
         [Test]
@@ -117,6 +143,17 @@ namespace Tests
             userAnimal.Stroke(3);
             Assert.AreEqual(1, userAnimal.Happiness);
 
+        }
+
+        [Test]
+        public void TestFeedInvalid()
+        {
+            UserAnimal userAnimal = new UserAnimal() {
+                Animal = testAnimal
+            };
+
+            Assert.Catch<System.ArgumentException>(() => userAnimal.Feed(-0.1m));
+            Assert.Catch<System.ArgumentException>(() => userAnimal.Feed(0));
         }
     }
 }
