@@ -163,6 +163,26 @@ namespace Tests
             }
         }
 
+        [Test]
+        public void TestGetAll()
+        {
+            User user = new User() {
+                DisplayName = "Some display name"
+            };
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                context.Users.Add(user);
+                context.Users.Add(new User() { DisplayName = "Another random user" });
+                context.SaveChanges();
+            }
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                UserService service = new UserService(context);
+                
+                Assert.AreEqual(2, service.GetAll().Count());
+            }
+        }
+
         [TearDown]
         public void TearDown()
         {

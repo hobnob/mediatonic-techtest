@@ -224,6 +224,29 @@ namespace Tests
             }
         }
 
+
+        [Test]
+        public void TestGetAll()
+        {
+            Animal animal = new Animal() {
+                TypeName = "Some animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
+            };
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                context.Animals.Add(animal);
+                context.Animals.Add(new Animal() { TypeName = "Another random animal" });
+                context.SaveChanges();
+            }
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                AnimalService service = new AnimalService(context);
+
+                Assert.AreEqual(2, service.GetAll().Count());
+            }
+        }
+
         [TearDown]
         public void TearDown()
         {
