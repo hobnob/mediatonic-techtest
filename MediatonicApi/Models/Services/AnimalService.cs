@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using MediatonicApi.Models.Exceptions;
+using System.Linq;
 
 namespace MediatonicApi.Models.Services
 {
@@ -21,7 +22,7 @@ namespace MediatonicApi.Models.Services
             }
 
             if (_context.Animals.Any(a => a.TypeName.ToLower() == animal.TypeName.ToLower())) {
-                throw new System.ArgumentException("Animal of this type already exists");
+                throw new DuplicateEntryException("Animal of this type already exists");
             }
 
             _context.Animals.Add(animal);
