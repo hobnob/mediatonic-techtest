@@ -1,4 +1,5 @@
 ﻿using MediatonicApi.Models.Exceptions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MediatonicApi.Models.Services
@@ -42,6 +43,11 @@ namespace MediatonicApi.Models.Services
         public Animal Get(uint id)
         {
             return _context.Animals.FirstOrDefault(a => a.Id == id);
+        }
+
+        public IEnumerable<Animal> GetAll()
+        {
+            return _context.Animals.ToArray();
         }
     }
 }
