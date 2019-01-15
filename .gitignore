@@ -13,6 +13,9 @@
 # SQLite DB
 *.sqlite
 
+#API docs XML
+api.xml
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

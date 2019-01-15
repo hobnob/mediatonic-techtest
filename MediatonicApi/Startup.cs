@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace MediatonicApi
 {
@@ -23,6 +27,17 @@ namespace MediatonicApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddSwaggerGen(o => {
+                o.SwaggerDoc("v1", new Info {
+                    Version = "v1",
+                    Title = "Mediatonic Pets API",
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, "api.xml");
+                o.IncludeXmlComments(xmlPath);
+            });
+
             // Set up the db context
             services.AddDbContext<ApiContext>(options =>
                options.UseSqlite(Configuration.GetConnectionString("dbConnection")));
@@ -39,8 +54,12 @@ namespace MediatonicApi
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseMvc();
+            app.UseSwagger();
+            app.UseSwaggerUI(o => {
+                o.SwaggerEndpoint("/swagger/v1/swagger.json", "Mediatonic Pets API");
+            });
         }
     }
 }
