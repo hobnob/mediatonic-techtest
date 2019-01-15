@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatonicApi.Models.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace MediatonicApi.Models.Services
@@ -22,7 +23,7 @@ namespace MediatonicApi.Models.Services
             }
 
             if (_context.Users.Any(u => u.DisplayName.ToLower() == user.DisplayName.ToLower())) {
-                throw new System.ArgumentException("User already exists");
+                throw new DuplicateEntryException("User already exists");
             }
 
             _context.Users.Add(user);
@@ -38,16 +39,16 @@ namespace MediatonicApi.Models.Services
                 .FirstOrDefault(u => u.Id == userId);
 
             if (user == null) {
-                throw new System.ArgumentException("User ID does not exist");
+                throw new NotFoundException("User ID does not exist");
             }
 
             Animal animal = _context.Animals.FirstOrDefault(a => a.Id == animalId);
             if (animal == null) {
-                throw new System.ArgumentException("Animal ID does not exist");
+                throw new NotFoundException("Animal ID does not exist");
             }
 
             if (user.Animals.Any(a => a.AnimalId == animalId)) {
-                throw new System.ArgumentException("User already owns '" + animal.TypeName + "'");
+                throw new DuplicateEntryException("User already owns '" + animal.TypeName + "'");
             }
             
             _context.Add(new UserAnimal() {
