@@ -15,7 +15,7 @@ namespace MediatonicApi.Models
             {
                 return Math.Round(
                         Math.Max(
-                            Animal.MinHappiness,
+                            MIN_HAPPINESS,
                             happinessAtUpdate - (Animal.SadnessPerSecond * (int) (DateTime.UtcNow - lastHappinessUpdate).TotalSeconds)
                         ), 2
                 );
@@ -27,7 +27,7 @@ namespace MediatonicApi.Models
             {
                 return Math.Round(
                     Math.Min(
-                        Animal.MaxHunger,
+                        MAX_HUNGER,
                         hungerAtUpdate + (Animal.HungerPerSecond * (int) (DateTime.UtcNow - lastHungerUpdate).TotalSeconds)
                     ), 2
                 );
@@ -39,6 +39,10 @@ namespace MediatonicApi.Models
         private decimal hungerAtUpdate;
         private decimal happinessAtUpdate;
 
+        private const uint MAX_HUNGER = 1;
+        private const int MIN_HAPPINESS = -1;
+        private const uint MAX_HAPPINESS = 1;
+
         public void Feed(uint foodAmount)
         {
             hungerAtUpdate = Math.Max(Hunger - foodAmount, 0);
@@ -47,7 +51,7 @@ namespace MediatonicApi.Models
 
         public void Stroke(uint happinessAmount)
         {
-            happinessAtUpdate = Math.Min(Happiness + happinessAmount, Animal.MaxHappiness);
+            happinessAtUpdate = Math.Min(Happiness + happinessAmount, MAX_HAPPINESS);
             lastHappinessUpdate = DateTime.UtcNow;
         }
     }

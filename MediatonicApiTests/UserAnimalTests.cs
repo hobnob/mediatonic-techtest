@@ -15,9 +15,6 @@ namespace Tests
                 TypeName = "Test Animal",
                 HungerPerSecond = 0.5m,
                 SadnessPerSecond = 0.25m,
-                MinHappiness = -1,
-                MaxHappiness = 1,
-                MaxHunger = 1
             };
         }
 
