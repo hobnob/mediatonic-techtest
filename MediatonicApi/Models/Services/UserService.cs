@@ -1,4 +1,5 @@
 ﻿using MediatonicApi.Models.Exceptions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MediatonicApi.Models.Services
@@ -32,6 +33,11 @@ namespace MediatonicApi.Models.Services
         public User Get(uint id)
         {
             return _context.Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public IEnumerable<User> GetAll()
+        {
+            return _context.Users.ToArray();
         }
     }
 }
