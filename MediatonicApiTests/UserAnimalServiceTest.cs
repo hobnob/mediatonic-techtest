@@ -328,6 +328,7 @@ namespace Tests
 
                 Assert.AreEqual(user.Id, service.Get(user.Id, animal.Id).UserId);
                 Assert.AreEqual(animal.Id, service.Get(user.Id, animal.Id).AnimalId);
+                Assert.IsNotNull(service.Get(user.Id, animal.Id).Animal);
             }
         }
 
@@ -380,6 +381,59 @@ namespace Tests
 
                 Assert.IsNull(service.Get(user.Id + 2, animal.Id));
                 Assert.IsNull(service.Get(user.Id, animal.Id + 2));
+            }
+        }
+
+        [Test]
+        public void TestGetAll()
+        {
+            User user = new User() {
+                DisplayName = "Some display name"
+            };
+
+            Animal animal = new Animal() {
+                TypeName = "Test animal",
+                HungerPerSecond = 0.5m,
+                SadnessPerSecond = 0.4m
+            };
+
+            User user2 = new User() {
+                DisplayName = "Some display name 2"
+            };
+
+            Animal animal2 = new Animal() {
+                TypeName = "Test animal 2",
+                HungerPerSecond = 0.5m,
+                SadnessPerSecond = 0.4m
+            };
+
+            UserAnimal userAnimal;
+            UserAnimal userAnimal2;
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                context.Users.Add(user);
+                context.Animals.Add(animal);
+
+                userAnimal = new UserAnimal() {
+                    UserId = user.Id,
+                    AnimalId = animal.Id,
+                };
+
+                userAnimal2 = new UserAnimal() {
+                    UserId = user2.Id,
+                    AnimalId = animal2.Id,
+                };
+
+                context.UserAnimals.Add(userAnimal);
+                context.UserAnimals.Add(userAnimal2);
+                context.SaveChanges();
+            }
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                UserAnimalService service = new UserAnimalService(context);
+
+                Assert.AreEqual(1, service.GetAll(user.Id).Count());
+                Assert.AreEqual(animal.Id, service.GetAll(user.Id).First().AnimalId);
+                Assert.IsNotNull(service.GetAll(user.Id).First().Animal);
             }
         }
 
