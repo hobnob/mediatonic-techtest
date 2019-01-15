@@ -1,5 +1,6 @@
 ﻿using MediatonicApi.Models.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MediatonicApi.Models.Services
@@ -50,7 +51,21 @@ namespace MediatonicApi.Models.Services
 
         public UserAnimal Get(uint userId, uint animalId)
         {
-            return _context.UserAnimals.FirstOrDefault(ua => ua.UserId == userId && ua.AnimalId == animalId);
+            return _context
+                .UserAnimals
+                .Include(ua => ua.Animal)
+                .FirstOrDefault(ua => ua.UserId == userId && ua.AnimalId == animalId)
+            ;
+        }
+
+        public IEnumerable<UserAnimal> GetAll(uint userId)
+        {
+            return _context
+                .UserAnimals
+                .Include(ua => ua.Animal)
+                .Where(ua => ua.UserId == userId)
+                .ToArray()
+            ;
         }
     }
 }
