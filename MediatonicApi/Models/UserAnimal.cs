@@ -1,14 +1,18 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace MediatonicApi.Models
 {
     public class UserAnimal
     {
         public uint UserId { get; set; }
-        public User User { get; set; }
-
         public uint AnimalId { get; set; }
+
+        [JsonIgnore]
         public Animal Animal { get; set; }
+
+        [JsonIgnore]
+        public User User { get; set; }
 
         public decimal Happiness {
             get

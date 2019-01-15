@@ -30,6 +30,7 @@ namespace MediatonicApi
             // Set up the services for a request
             services.AddScoped<UserService>();
             services.AddScoped<AnimalService>();
+            services.AddScoped<UserAnimalService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,8 +38,6 @@ namespace MediatonicApi
         {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
-            } else {
-                app.UseHsts();
             }
 
             app.UseMvc();
