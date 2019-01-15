@@ -11,6 +11,8 @@ namespace MediatonicApi.Controllers
     public class UserAnimalsController : ControllerBase
     {
         private UserAnimalService service;
+        private const decimal FEED_AMOUNT = 0.25m;
+        private const decimal STROKE_AMOUNT = 0.25m;
 
         public UserAnimalsController(UserAnimalService service)
         {
@@ -46,6 +48,36 @@ namespace MediatonicApi.Controllers
             } catch (NotFoundException e) {
                 return new BadRequestObjectResult(e.Message);
             }
+        }
+
+        [HttpGet("{id}/feed")]
+        public ActionResult<UserAnimal> Feed(uint userId,  uint id)
+        {
+            UserAnimal userAnimal = service.Get(userId, id);
+            if (userAnimal == null) {
+                return new NotFoundResult();
+            }
+
+            // Feed the animal and update the database
+            userAnimal.Feed(FEED_AMOUNT);
+            service.Update(userAnimal);
+
+            return Get(userId, id);
+        }
+
+        [HttpGet("{id}/stroke")]
+        public ActionResult<UserAnimal> Stroke(uint userId, uint id)
+        {
+            UserAnimal userAnimal = service.Get(userId, id);
+            if (userAnimal == null) {
+                return new NotFoundResult();
+            }
+
+            // Stroke the animal and update the database
+            userAnimal.Stroke(STROKE_AMOUNT);
+            service.Update(userAnimal);
+
+            return Get(userId, id);
         }
     }
 }
