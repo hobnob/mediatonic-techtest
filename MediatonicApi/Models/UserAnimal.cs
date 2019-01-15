@@ -13,10 +13,14 @@ namespace MediatonicApi.Models
         public decimal Happiness {
             get
             {
+                if (Animal == null) {
+                    throw new InvalidOperationException("Animal must be loaded before calculating Happiness");
+                }
+
                 return Math.Round(
                         Math.Max(
                             MIN_HAPPINESS,
-                            happinessAtUpdate - (Animal.SadnessPerSecond * (int) (DateTime.UtcNow - lastHappinessUpdate).TotalSeconds)
+                            happinessAtUpdate - (Animal.SadnessPerSecond * (int) Math.Floor((DateTime.UtcNow - lastHappinessUpdate).TotalSeconds))
                         ), 2
                 );
             }
@@ -25,10 +29,14 @@ namespace MediatonicApi.Models
         public decimal Hunger {
             get
             {
+                if (Animal == null) {
+                    throw new InvalidOperationException("Animal must be loaded before calculating Hunger");
+                }
+
                 return Math.Round(
                     Math.Min(
                         MAX_HUNGER,
-                        hungerAtUpdate + (Animal.HungerPerSecond * (int) (DateTime.UtcNow - lastHungerUpdate).TotalSeconds)
+                        hungerAtUpdate + (Animal.HungerPerSecond * (int) Math.Floor((DateTime.UtcNow - lastHungerUpdate).TotalSeconds))
                     ), 2
                 );
             }
@@ -43,14 +51,22 @@ namespace MediatonicApi.Models
         private const int MIN_HAPPINESS = -1;
         private const uint MAX_HAPPINESS = 1;
 
-        public void Feed(uint foodAmount)
+        public void Feed(decimal foodAmount)
         {
+            if (foodAmount <= 0) {
+                throw new ArgumentException("Food amount must be higher than zero");
+            }
+
             hungerAtUpdate = Math.Max(Hunger - foodAmount, 0);
             lastHungerUpdate = DateTime.UtcNow;
         }
 
-        public void Stroke(uint happinessAmount)
+        public void Stroke(decimal happinessAmount)
         {
+            if (happinessAmount <= 0) {
+                throw new ArgumentException("Happiness amount must be higher than zero");
+            }
+
             happinessAtUpdate = Math.Min(Happiness + happinessAmount, MAX_HAPPINESS);
             lastHappinessUpdate = DateTime.UtcNow;
         }
