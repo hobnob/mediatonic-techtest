@@ -25,6 +25,16 @@ namespace MediatonicApi.Models.Services
                 throw new DuplicateEntryException("Animal of this type already exists");
             }
 
+            // Make sure that Hunger actually moves
+            if (animal.HungerPerSecond <= 0) {
+                throw new System.ArgumentException("Hunger per second has to be bigger than zero");
+            }
+
+            // Make sure happiness actually moves
+            if (animal.SadnessPerSecond <= 0) {
+                throw new System.ArgumentException("Sadness per second has to be bigger than zero");
+            }
+
             _context.Animals.Add(animal);
             _context.SaveChanges();
         }

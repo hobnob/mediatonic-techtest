@@ -24,7 +24,9 @@ namespace Tests
         public void TestAddAnimal()
         {
             Animal animal = new Animal() {
-                TypeName = "Some new animal"
+                TypeName = "Some new animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
             };
 
             using (ApiContext context = new ApiContext(dbOptions)) {
@@ -46,7 +48,9 @@ namespace Tests
                 AnimalService service = new AnimalService(context);
 
                 Animal animal2 = new Animal {
-                    TypeName = newAnimalName
+                    TypeName = newAnimalName,
+                    HungerPerSecond = 0.1m,
+                    SadnessPerSecond = 0.1m
                 };
 
                 service.Add(animal2);
@@ -64,7 +68,9 @@ namespace Tests
         public void TestAddAnimalNoType()
         {
             Animal animal = new Animal() {
-                TypeName = ""
+                TypeName = "",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
             };
 
             using (ApiContext context = new ApiContext(dbOptions)) {
@@ -92,7 +98,9 @@ namespace Tests
         public void TestAddAnimalDuplicate()
         {
             Animal animal = new Animal() {
-                TypeName = "Some new animal"
+                TypeName = "Some new animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
             };
 
             using (ApiContext context = new ApiContext(dbOptions)) {
@@ -121,11 +129,63 @@ namespace Tests
         }
 
         [Test]
+        public void TestAnimalInvalidHunger()
+        {
+            Animal animal = new Animal() {
+                TypeName = "Some new animal",
+                HungerPerSecond = 0,
+                SadnessPerSecond = 0.1m
+            };
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                AnimalService service = new AnimalService(context);
+
+                Assert.Catch<System.ArgumentException>(() => service.Add(animal));
+
+                // Test with a value lower than zero
+                animal.HungerPerSecond = -0.1m;
+                Assert.Catch<System.ArgumentException>(() => service.Add(animal));
+            }
+
+            // Make sure no animals are in the DB
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                Assert.AreEqual(0, context.Animals.Count());
+            }
+        }
+
+        [Test]
+        public void TestAnimalInvalidSadness()
+        {
+            Animal animal = new Animal() {
+                TypeName = "Some new animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0
+            };
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                AnimalService service = new AnimalService(context);
+
+                Assert.Catch<System.ArgumentException>(() => service.Add(animal));
+
+                // Test with a value lower than zero
+                animal.SadnessPerSecond = -0.1m;
+                Assert.Catch<System.ArgumentException>(() => service.Add(animal));
+            }
+
+            // Make sure no animals are in the DB
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                Assert.AreEqual(0, context.Animals.Count());
+            }
+        }
+
+        [Test]
         public void TestGet()
         {
             string animalType = "Some new animal";
             Animal animal = new Animal() {
-                TypeName = animalType
+                TypeName = animalType,
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
             };
 
             using (ApiContext context = new ApiContext(dbOptions)) {
@@ -146,7 +206,9 @@ namespace Tests
         public void TestGetInvalid()
         {
             Animal animal = new Animal() {
-                TypeName = "Some new animal"
+                TypeName = "Some new animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
             };
 
             using (ApiContext context = new ApiContext(dbOptions)) {
