@@ -1,5 +1,12 @@
 # Mediatonic Tech Test
 
+## Contents
+ - [Usage](#usage)
+ - [Running Tests](#running-tests)
+ - [Running the API](#running-the-api)
+ - [Notes](#notes)
+ - [Available Routes](#available-routes)
+
 ## Usage
 The API is backed by a SQLite database to ensure that data is persistent even when the API isn't running. To begin, add a new user through the [POST User route](#post-v1users); add a new animal through the [POST Animal route](#post-v1animals); then assign the animal to the user using the [POST User/Animal route](#post-v1usersuseridanimals).
 
@@ -22,7 +29,7 @@ There are a few missing features here - namely authentication, and the capabilit
  - HTTP is use rather than HTTPS - in production everything would be HTTPS
  - Happiness and Hunger would probably be better as a per-minute countdown in reality. Per-second works well in testing and when displaying countdowns over time, but minutes will work better in an actual game where the player might be doing actions over the course of hours
 
-## Available routes
+## Available Routes
 
 ### `GET /swagger`
 A convienience route providing visual documentation and interacting with the API
