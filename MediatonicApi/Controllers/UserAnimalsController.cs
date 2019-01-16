@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MediatonicApi.Controllers
 {
-    [Route("v1/users/{userId}/animals")]
+    [Route("v1/Users/{userId}/Animals")]
     [ApiController]
     public class UserAnimalsController : ControllerBase
     {
@@ -15,6 +15,12 @@ namespace MediatonicApi.Controllers
         /// Holds the user animals service provider
         /// </summary>
         private IService<UserAnimal> service;
+
+
+        /// <summary>
+        /// Holds the user service provider
+        /// </summary>
+        private IService<User> userService;
 
         /// <summary>
         /// The amount that feeding an animal adds
@@ -30,9 +36,11 @@ namespace MediatonicApi.Controllers
         /// Creates a new user animals controller
         /// </summary>
         /// <param name="service">Injected user animals service</param>
-        public UserAnimalsController(IService<UserAnimal> service)
+        /// <param name="userService">Injected user service</param>
+        public UserAnimalsController(IService<UserAnimal> service, IService<User> userService)
         {
             this.service = service;
+            this.userService = userService;
         }
 
         /// <summary>
@@ -40,10 +48,16 @@ namespace MediatonicApi.Controllers
         /// </summary>
         /// <param name="userId">The user to get animals for</param>
         /// <returns>An array of animals that the user owns</returns>
+        /// <response code="404">User with that ID could not be found</response>
         [HttpGet]
         [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public ActionResult<IEnumerable<UserAnimal>> Get(uint userId)
         {
+            if (userService.FindOne(userId) == null) {
+                return new NotFoundResult();
+            }
+
             return new JsonResult(service.FindAll().Where(ua => ua.UserId == userId));
         }
 
@@ -77,12 +91,18 @@ namespace MediatonicApi.Controllers
         /// <param name="userId">The user to assign ownership to</param>
         /// <param name="animalId">The animal ID to assign to the user</param>
         /// <returns>The location of the new User Animal entity</returns>
-        /// <response code="400">Animal or User with that ID do not exist</response>
+        /// <response code="400">Animal owned by user with that ID does not exist</response>
+        /// <response code="404">User with that ID could not be found</response>
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Post(uint userId, [FromBody] uint animalId)
         {
+            if (userService.FindOne(userId) == null) {
+                return new NotFoundResult();
+            }
+
             try {
                 UserAnimal userAnimal = new UserAnimal() { UserId = userId, AnimalId = animalId };
                 service.Add(userAnimal);
@@ -102,7 +122,7 @@ namespace MediatonicApi.Controllers
         /// <param name="id">The ID of the animal to feed</param>
         /// <returns>The new status for that particular animal</returns>
         /// <response code="404">Animal or User with that ID could not be found</response>
-        [HttpPut("{id}/feed")]
+        [HttpPut("{id}/Feed")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Feed(uint userId,  uint id)
@@ -130,7 +150,7 @@ namespace MediatonicApi.Controllers
         /// <param name="id">The ID of the animal to stroke</param>
         /// <returns>The new status for that particular animal</returns>
         /// <response code="404">Animal or User with that ID could not be found</response>
-        [HttpPut("{id}/stroke")]
+        [HttpPut("{id}/Stroke")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Stroke(uint userId, uint id)
