@@ -99,6 +99,11 @@ namespace MediatonicApi.Models
         private const uint MAX_HUNGER = 1;
 
         /// <summary>
+        /// The minimum level of hunger the animal can feel
+        /// </summary>
+        private const int MIN_HUNGER = -1;
+
+        /// <summary>
         /// The minimum amount of happiness an animal can feel
         /// </summary>
         private const int MIN_HAPPINESS = -1;
@@ -119,7 +124,7 @@ namespace MediatonicApi.Models
                 throw new ArgumentException("Food amount must be higher than zero");
             }
 
-            hungerAtUpdate = Math.Max(Hunger - foodAmount, 0);
+            hungerAtUpdate = Math.Max(Hunger - foodAmount, MIN_HUNGER);
             lastHungerUpdate = DateTime.UtcNow;
         }
 

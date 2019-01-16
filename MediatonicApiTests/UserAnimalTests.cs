@@ -80,7 +80,6 @@ namespace Tests
             Assert.Catch<System.InvalidOperationException>(() => { decimal x = userAnimal.Happiness; });
         }
 
-
         [Test]
         public void TestStroke()
         {
@@ -88,19 +87,28 @@ namespace Tests
                 Animal = testAnimal
             };
 
-            // Wait until hunger is at maximum
-            Thread.Sleep(2000);
+            // Wait until happiness is at its lowest
+            Thread.Sleep(4000);
 
-            // Make sure that feeding reduces back to zero
-            userAnimal.Feed(1);
-            Assert.AreEqual(0, userAnimal.Hunger);
+            // Make sure that stroking reduces back to zero
+            userAnimal.Stroke(1);
+            Assert.AreEqual(0, userAnimal.Happiness);
 
-            // Hunger is now 0.5
-            Thread.Sleep(1000);
+            // Make sure that stroking can go up to 1
+            userAnimal.Stroke(1);
+            Assert.AreEqual(1, userAnimal.Happiness);
 
-            // Make sure that feeding reduces back to zero and no further
-            userAnimal.Feed(2);
-            Assert.AreEqual(0, userAnimal.Hunger);
+            // Make sure that stroking can go no further than 1
+            userAnimal.Stroke(1);
+            Assert.AreEqual(1, userAnimal.Happiness);
+
+            // Wait until happiness is at its lowest
+            Thread.Sleep(4000);
+
+            // Make sure that stroking can go no further than 1
+            userAnimal.Stroke(3);
+            Assert.AreEqual(1, userAnimal.Happiness);
+
         }
 
         [Test]
@@ -121,28 +129,27 @@ namespace Tests
                 Animal = testAnimal
             };
 
-            // Wait until happiness is at its lowest
-            Thread.Sleep(4000);
+            // Wait until hunger is at maximum
+            Thread.Sleep(2000);
 
-            // Make sure that stroking reduces back to zero
-            userAnimal.Stroke(1);
-            Assert.AreEqual(0, userAnimal.Happiness);
+            // Make sure that feeding reduces back to zero
+            userAnimal.Feed(1);
+            Assert.AreEqual(0, userAnimal.Hunger);
             
-            // Make sure that stroking can go up to 1
-            userAnimal.Stroke(1);
-            Assert.AreEqual(1, userAnimal.Happiness);
+            // Make sure that hunger goes to -1
+            userAnimal.Feed(1);
+            Assert.AreEqual(-1, userAnimal.Hunger);
 
-            // Make sure that stroking can go no further than 1
-            userAnimal.Stroke(1);
-            Assert.AreEqual(1, userAnimal.Happiness);
+            // Make sure that hunger goes no lower than -1
+            userAnimal.Feed(1);
+            Assert.AreEqual(-1, userAnimal.Hunger);
 
-            // Wait until happiness is at its lowest
-            Thread.Sleep(4000);
+            // Wait until hunger is at maximum
+            Thread.Sleep(2000);
 
-            // Make sure that stroking can go no further than 1
-            userAnimal.Stroke(3);
-            Assert.AreEqual(1, userAnimal.Happiness);
-
+            // Make sure that feeding reduces back to -1 and no further
+            userAnimal.Feed(3);
+            Assert.AreEqual(-1, userAnimal.Hunger);
         }
 
         [Test]
