@@ -68,7 +68,7 @@ namespace MediatonicApi.Controllers
             try {
                 service.Add(user);
 
-                return Get(user.Id);
+                return new CreatedAtActionResult("Get", "Users", new { id = user.Id }, user);
             } catch (DuplicateEntryException e) {
                 return new BadRequestObjectResult(e.Message);
             } catch (System.ArgumentException e) {

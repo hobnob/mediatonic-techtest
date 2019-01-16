@@ -84,9 +84,10 @@ namespace MediatonicApi.Controllers
         public ActionResult<UserAnimal> Post(uint userId, [FromBody] uint animalId)
         {
             try {
-                service.Add(new UserAnimal() { UserId = userId, AnimalId = animalId });
+                UserAnimal userAnimal = new UserAnimal() { UserId = userId, AnimalId = animalId };
+                service.Add(userAnimal);
 
-                return new CreatedAtActionResult("Get", "UserAnimals", new { userId, id = animalId }, null);
+                return new CreatedAtActionResult("Get", "UserAnimals", new { userId, id = animalId }, userAnimal);
             } catch (DuplicateEntryException e) {
                 return new BadRequestObjectResult(e.Message);
             } catch (NotFoundException e) {
