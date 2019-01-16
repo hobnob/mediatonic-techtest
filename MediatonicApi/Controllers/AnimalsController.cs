@@ -6,9 +6,6 @@ using System.Collections.Generic;
 
 namespace MediatonicApi.Controllers
 {
-    /// <summary>
-    /// Controller for animal routes
-    /// </summary>
     [Route("v1/[controller]")]
     [ApiController]
     public class AnimalsController : ControllerBase

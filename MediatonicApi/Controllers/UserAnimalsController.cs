@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MediatonicApi.Controllers
 {
-    /// <summary>
-    /// Controller for routes for animals assigend to users
-    /// </summary>
     [Route("v1/users/{userId}/animals")]
     [ApiController]
     public class UserAnimalsController : ControllerBase
