@@ -31,6 +31,9 @@ namespace MediatonicApi.Models.Services
             // Trim the display name - don't want odd spaces at the end
             user.DisplayName = user.DisplayName?.Trim();
 
+            // Make sure the ID is reset - we're adding after all
+            user.Id = 0;
+
             if (string.IsNullOrEmpty(user.DisplayName)) {
                 throw new System.ArgumentException("Display name cannot be empty");
             }

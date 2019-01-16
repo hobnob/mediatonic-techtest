@@ -31,6 +31,9 @@ namespace MediatonicApi.Models.Services
             // Trim the name - don't want odd spaces at the end
             animal.TypeName = animal.TypeName?.Trim();
 
+            // Make sure that animal ID is reset - this is an addition after all
+            animal.Id = 0;
+
             if (string.IsNullOrEmpty(animal.TypeName)) {
                 throw new System.ArgumentException("Animal type cannot be empty");
             }

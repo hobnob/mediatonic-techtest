@@ -444,19 +444,7 @@ namespace Tests
         {
             // Remove everything in the DB - ready to test again
             using (ApiContext context = new ApiContext(dbOptions)) {
-                foreach (User u in context.Users) {
-                    context.Remove(u);
-                }
-
-                foreach (Animal a in context.Animals) {
-                    context.Remove(a);
-                }
-
-                foreach (UserAnimal ua in context.UserAnimals) {
-                    context.Remove(ua);
-                }
-
-                context.SaveChanges();
+                context.Database.EnsureDeleted();
             }
         }
     }

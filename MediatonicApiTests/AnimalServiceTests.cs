@@ -122,9 +122,47 @@ namespace Tests
                 Assert.Catch<DuplicateEntryException>(() => service.Add(animal));
             }
 
-            // Make sure no animals are in the DB
+            // Make sure no additional animals are in the DB
             using (ApiContext context = new ApiContext(dbOptions)) {
                 Assert.AreEqual(1, context.Animals.Count());
+            }
+        }
+
+        [Test]
+        public void TestAddAnimalExistingId()
+        {
+            Animal animal = new Animal() {
+                TypeName = "Some new animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
+            };
+
+            Animal animal2 = new Animal() {
+                TypeName = "Another new animal",
+                HungerPerSecond = 0.1m,
+                SadnessPerSecond = 0.1m
+            };
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                context.Animals.Add(animal);
+                context.SaveChanges();
+            }
+
+            // Set the second animal to have a duplicate identifier
+            animal2.Id = animal.Id;
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                AnimalService service = new AnimalService(context);
+                service.Add(animal2);
+            }
+
+            // Make sure 2 animals are in the DB and are correct
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                Assert.AreEqual(2, context.Animals.Count());
+                Assert.AreEqual(animal.Id, context.Animals.First().Id);
+                Assert.AreEqual(animal.TypeName, context.Animals.First().TypeName);
+                Assert.AreEqual(animal2.Id, context.Animals.Last().Id);
+                Assert.AreEqual(animal2.TypeName, context.Animals.Last().TypeName);
             }
         }
 
@@ -252,19 +290,7 @@ namespace Tests
         {
             // Remove everything in the DB - ready to test again
             using (ApiContext context = new ApiContext(dbOptions)) {
-                foreach (User u in context.Users) {
-                    context.Remove(u);
-                }
-
-                foreach (Animal a in context.Animals) {
-                    context.Remove(a);
-                }
-
-                foreach (UserAnimal ua in context.UserAnimals) {
-                    context.Remove(ua);
-                }
-
-                context.SaveChanges();
+                context.Database.EnsureDeleted();
             }
         }
     }

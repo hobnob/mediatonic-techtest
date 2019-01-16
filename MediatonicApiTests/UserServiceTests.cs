@@ -122,6 +122,40 @@ namespace Tests
         }
 
         [Test]
+        public void TestAddUserExistingId()
+        {
+            User user = new User() {
+                DisplayName = "Some display name"
+            };
+
+            User user2 = new User() {
+                DisplayName = "Some other display name"
+            };
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                context.Users.Add(user);
+                context.SaveChanges();
+            }
+
+            // Set the second user to have a duplicate identifier
+            user2.Id = user.Id;
+
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                UserService service = new UserService(context);
+                service.Add(user2);
+            }
+
+            // Make sure 2 animals are in the DB and are correct
+            using (ApiContext context = new ApiContext(dbOptions)) {
+                Assert.AreEqual(2, context.Users.Count());
+                Assert.AreEqual(user.Id, context.Users.First().Id);
+                Assert.AreEqual(user.DisplayName, context.Users.First().DisplayName);
+                Assert.AreEqual(user2.Id, context.Users.Last().Id);
+                Assert.AreEqual(user2.DisplayName, context.Users.Last().DisplayName);
+            }
+        }
+
+        [Test]
         public void TestFindOne()
         {
             string displayName = "Some display name";
@@ -188,19 +222,7 @@ namespace Tests
         {
             // Remove everything in the DB - ready to test again
             using (ApiContext context = new ApiContext(dbOptions)) {
-                foreach (User u in context.Users) {
-                    context.Remove(u);
-                }
-
-                foreach (Animal a in context.Animals) {
-                    context.Remove(a);
-                }
-
-                foreach (UserAnimal ua in context.UserAnimals) {
-                    context.Remove(ua);
-                }
-
-                context.SaveChanges();
+                context.Database.EnsureDeleted();
             }
         }
     }
