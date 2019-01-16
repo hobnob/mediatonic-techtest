@@ -13,13 +13,13 @@ namespace MediatonicApi.Controllers
         /// <summary>
         /// Holds the user service provider
         /// </summary>
-        private UserService service;
+        private IService<User> service;
 
         /// <summary>
         /// Creates a new user controller
         /// </summary>
         /// <param name="service">Injected users service</param>
-        public UsersController(UserService service)
+        public UsersController(IService<User> service)
         {
             this.service = service;
         }
@@ -32,7 +32,7 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(200)]
         public ActionResult<IEnumerable<User>> Get()
         {
-            return new JsonResult(service.GetAll());
+            return new JsonResult(service.FindAll());
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(404)]
         public ActionResult<User> Get(uint id)
         {
-            User user = service.Get(id);
+            User user = service.FindOne(id);
             if (user == null) {
                 return new NotFoundResult();
             }

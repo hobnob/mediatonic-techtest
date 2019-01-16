@@ -13,13 +13,13 @@ namespace MediatonicApi.Controllers
         /// <summary>
         /// Holds the animals service provider
         /// </summary>
-        private AnimalService service;
+        private IService<Animal> service;
 
         /// <summary>
         /// Creates a new animals controller
         /// </summary>
         /// <param name="service">Injected animals service</param>
-        public AnimalsController(AnimalService service)
+        public AnimalsController(IService<Animal> service)
         {
             this.service = service;
         }
@@ -32,7 +32,7 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(200)]
         public ActionResult<IEnumerable<Animal>> Get()
         {
-            return new JsonResult(service.GetAll());
+            return new JsonResult(service.FindAll());
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Animal> Get(uint id)
         {
-            Animal animal = service.Get(id);
+            Animal animal = service.FindOne(id);
             if (animal == null) {
                 return new NotFoundResult();
             }

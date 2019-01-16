@@ -280,7 +280,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestGet()
+        public void TestFindOne()
         {
             User user = new User() {
                 DisplayName = "Some display name"
@@ -326,14 +326,14 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 UserAnimalService service = new UserAnimalService(context);
 
-                Assert.AreEqual(user.Id, service.Get(user.Id, animal.Id).UserId);
-                Assert.AreEqual(animal.Id, service.Get(user.Id, animal.Id).AnimalId);
-                Assert.IsNotNull(service.Get(user.Id, animal.Id).Animal);
+                Assert.AreEqual(user.Id, service.FindOne(user.Id).UserId);
+                Assert.AreEqual(animal.Id, service.FindOne(user.Id).AnimalId);
+                Assert.IsNotNull(service.FindOne(user.Id).Animal);
             }
         }
 
         [Test]
-        public void TestGetInvalid()
+        public void TestFindOneInvalid()
         {
             User user = new User() {
                 DisplayName = "Some display name"
@@ -379,13 +379,12 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 UserAnimalService service = new UserAnimalService(context);
 
-                Assert.IsNull(service.Get(user.Id + 2, animal.Id));
-                Assert.IsNull(service.Get(user.Id, animal.Id + 2));
+                Assert.IsNull(service.FindOne(user.Id + 2));
             }
         }
 
         [Test]
-        public void TestGetAll()
+        public void TestFindAll()
         {
             User user = new User() {
                 DisplayName = "Some display name"
@@ -412,6 +411,8 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 context.Users.Add(user);
                 context.Animals.Add(animal);
+                context.Users.Add(user2);
+                context.Animals.Add(animal2);
 
                 userAnimal = new UserAnimal() {
                     UserId = user.Id,
@@ -431,9 +432,10 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 UserAnimalService service = new UserAnimalService(context);
 
-                Assert.AreEqual(1, service.GetAll(user.Id).Count());
-                Assert.AreEqual(animal.Id, service.GetAll(user.Id).First().AnimalId);
-                Assert.IsNotNull(service.GetAll(user.Id).First().Animal);
+                Assert.AreEqual(2, service.FindAll().Count());
+                Assert.AreEqual(user.Id, service.FindAll().First().UserId);
+                Assert.AreEqual(user2.Id, service.FindAll().Last().UserId);
+                Assert.IsNotNull(service.FindAll().First().Animal);
             }
         }
 

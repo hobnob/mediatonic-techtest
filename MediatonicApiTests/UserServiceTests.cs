@@ -122,7 +122,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestGet()
+        public void TestFindOne()
         {
             string displayName = "Some display name";
             User user = new User() {
@@ -138,13 +138,13 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 UserService service = new UserService(context);
 
-                Assert.AreNotEqual(null, service.Get(user.Id));
-                Assert.AreEqual(displayName, service.Get(user.Id).DisplayName);
+                Assert.AreNotEqual(null, service.FindOne(user.Id));
+                Assert.AreEqual(displayName, service.FindOne(user.Id).DisplayName);
             }
         }
 
         [Test]
-        public void TestGetInvalid()
+        public void TestFindOneInvalid()
         {
             User user = new User() {
                 DisplayName = "Some display name"
@@ -159,12 +159,12 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 UserService service = new UserService(context);
 
-                Assert.IsNull(service.Get(user.Id + 2));
+                Assert.IsNull(service.FindOne(user.Id + 2));
             }
         }
 
         [Test]
-        public void TestGetAll()
+        public void TestFindAll()
         {
             User user = new User() {
                 DisplayName = "Some display name"
@@ -179,7 +179,7 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 UserService service = new UserService(context);
                 
-                Assert.AreEqual(2, service.GetAll().Count());
+                Assert.AreEqual(2, service.FindAll().Count());
             }
         }
 

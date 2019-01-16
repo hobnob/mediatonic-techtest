@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MediatonicApi.Models.Services
 {
-    public class UserAnimalService
+    public class UserAnimalService : IService<UserAnimal>
     {
         private ApiContext _context;
 
@@ -49,23 +49,18 @@ namespace MediatonicApi.Models.Services
             _context.SaveChanges();
         }
 
-        public UserAnimal Get(uint userId, uint animalId)
+        public UserAnimal FindOne(uint userId)
         {
             return _context
                 .UserAnimals
                 .Include(ua => ua.Animal)
-                .FirstOrDefault(ua => ua.UserId == userId && ua.AnimalId == animalId)
+                .FirstOrDefault(ua => ua.UserId == userId)
             ;
         }
 
-        public IEnumerable<UserAnimal> GetAll(uint userId)
+        public IEnumerable<UserAnimal> FindAll()
         {
-            return _context
-                .UserAnimals
-                .Include(ua => ua.Animal)
-                .Where(ua => ua.UserId == userId)
-                .ToArray()
-            ;
+            return _context.UserAnimals.Include(ua => ua.Animal);
         }
     }
 }

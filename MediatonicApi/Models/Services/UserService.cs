@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace MediatonicApi.Models.Services
 {
-    public class UserService
+    public class UserService : IService<User>
     {
         private ApiContext _context;
 
@@ -30,12 +30,17 @@ namespace MediatonicApi.Models.Services
             _context.SaveChanges();
         }
 
-        public User Get(uint id)
+        public void Update(User user)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public User FindOne(uint id)
         {
             return _context.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public IEnumerable<User> GetAll()
+        public IEnumerable<User> FindAll()
         {
             return _context.Users.ToArray();
         }

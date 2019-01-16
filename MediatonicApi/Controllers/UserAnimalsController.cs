@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MediatonicApi.Models;
 using MediatonicApi.Models.Exceptions;
 using MediatonicApi.Models.Services;
@@ -13,7 +14,7 @@ namespace MediatonicApi.Controllers
         /// <summary>
         /// Holds the user animals service provider
         /// </summary>
-        private UserAnimalService service;
+        private IService<UserAnimal> service;
 
         /// <summary>
         /// The amount that feeding an animal adds
@@ -29,7 +30,7 @@ namespace MediatonicApi.Controllers
         /// Creates a new user animals controller
         /// </summary>
         /// <param name="service">Injected user animals service</param>
-        public UserAnimalsController(UserAnimalService service)
+        public UserAnimalsController(IService<UserAnimal> service)
         {
             this.service = service;
         }
@@ -43,7 +44,7 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(200)]
         public ActionResult<IEnumerable<UserAnimal>> Get(uint userId)
         {
-            return new JsonResult(service.GetAll(userId));
+            return new JsonResult(service.FindAll().Where(ua => ua.UserId == userId));
         }
 
         /// <summary>
@@ -58,7 +59,11 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Get(uint userId, uint id)
         {
-            UserAnimal userAnimal = service.Get(userId, id);
+            UserAnimal userAnimal = service
+                .FindAll()
+                .FirstOrDefault(ua => ua.UserId == userId && ua.AnimalId == id)
+            ;
+
             if (userAnimal == null) {
                 return new NotFoundResult();
             }
@@ -101,7 +106,11 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Feed(uint userId,  uint id)
         {
-            UserAnimal userAnimal = service.Get(userId, id);
+            UserAnimal userAnimal = service
+                .FindAll()
+                .FirstOrDefault(ua => ua.UserId == userId && ua.AnimalId == id)
+            ;
+
             if (userAnimal == null) {
                 return new NotFoundResult();
             }
@@ -125,7 +134,11 @@ namespace MediatonicApi.Controllers
         [ProducesResponseType(404)]
         public ActionResult<UserAnimal> Stroke(uint userId, uint id)
         {
-            UserAnimal userAnimal = service.Get(userId, id);
+            UserAnimal userAnimal = service
+                .FindAll()
+                .FirstOrDefault(ua => ua.UserId == userId && ua.AnimalId == id)
+            ;
+
             if (userAnimal == null) {
                 return new NotFoundResult();
             }

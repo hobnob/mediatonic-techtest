@@ -179,7 +179,7 @@ namespace Tests
         }
 
         [Test]
-        public void TestGet()
+        public void TestFindOne()
         {
             string animalType = "Some new animal";
             Animal animal = new Animal() {
@@ -197,13 +197,13 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 AnimalService service = new AnimalService(context);
 
-                Assert.AreNotEqual(null, service.Get(animal.Id));
-                Assert.AreEqual(animalType, service.Get(animal.Id).TypeName);
+                Assert.AreNotEqual(null, service.FindOne(animal.Id));
+                Assert.AreEqual(animalType, service.FindOne(animal.Id).TypeName);
             }
         }
 
         [Test]
-        public void TestGetInvalid()
+        public void TestFindOneInvalid()
         {
             Animal animal = new Animal() {
                 TypeName = "Some new animal",
@@ -220,13 +220,13 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 AnimalService service = new AnimalService(context);
 
-                Assert.IsNull(service.Get(animal.Id + 2));
+                Assert.IsNull(service.FindOne(animal.Id + 2));
             }
         }
 
 
         [Test]
-        public void TestGetAll()
+        public void TestFindAll()
         {
             Animal animal = new Animal() {
                 TypeName = "Some animal",
@@ -243,7 +243,7 @@ namespace Tests
             using (ApiContext context = new ApiContext(dbOptions)) {
                 AnimalService service = new AnimalService(context);
 
-                Assert.AreEqual(2, service.GetAll().Count());
+                Assert.AreEqual(2, service.FindAll().Count());
             }
         }
 

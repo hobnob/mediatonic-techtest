@@ -43,9 +43,9 @@ namespace MediatonicApi
                options.UseSqlite(Configuration.GetConnectionString("dbConnection")));
 
             // Set up the services for a request
-            services.AddScoped<UserService>();
-            services.AddScoped<AnimalService>();
-            services.AddScoped<UserAnimalService>();
+            services.AddScoped<IService<User>, UserService>();
+            services.AddScoped<IService<Animal>, AnimalService>();
+            services.AddScoped<IService<UserAnimal>, UserAnimalService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

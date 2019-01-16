@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace MediatonicApi.Models.Services
 {
-    public class AnimalService
+    public class AnimalService : IService<Animal>
     {
         private ApiContext _context;
 
@@ -40,14 +40,19 @@ namespace MediatonicApi.Models.Services
             _context.SaveChanges();
         }
 
-        public Animal Get(uint id)
+        public void Update(Animal animal)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Animal FindOne(uint id)
         {
             return _context.Animals.FirstOrDefault(a => a.Id == id);
         }
 
-        public IEnumerable<Animal> GetAll()
+        public IEnumerable<Animal> FindAll()
         {
-            return _context.Animals.ToArray();
+            return _context.Animals;
         }
     }
 }
